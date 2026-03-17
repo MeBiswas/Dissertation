@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-from utils import section
+from src.utils import section
 
 # STEP 1 — Compute Count Threshold rho  (Equation 1)
 def compute_count_threshold(pb: np.ndarray, plot_histogram: bool = True) -> dict:

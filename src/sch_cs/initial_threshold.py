@@ -3,7 +3,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from utils import section
+from src.utils import section
 
 # STEP 2 — Compute Initial Threshold t*  (Equation 2)
 def compute_initial_threshold(step1: dict, plot: bool = True) -> dict:
