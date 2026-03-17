@@ -6,10 +6,10 @@ config_1 = {
     "dataset_path": base_path + bcd_dataset['sick'],
     
     #processing mode
-    "process_all": True,
+    "process_all": False,
     
     # used iff process_all=False
-    "image_index": 0,
+    "image_index": 95,
     
     # visualization
     "show_visualizations": True,
