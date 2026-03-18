@@ -17,7 +17,8 @@ class ImageProcessor:
         img_no_scale, crop_col = self.remove_color_scale(img)
         
         # Step 2: Extract R channel (MSB grayscale)
-        msb_gray = self.to_grayscale(img)
+        # msb_gray = self.to_grayscale(img)
+        msb_gray = self.to_grayscale(img_no_scale)
 
         print(f"[Log] ImageProcessor: Loaded {image_path}, "
           f"removed color scale at col {crop_col}, "
@@ -31,7 +32,14 @@ class ImageProcessor:
         plt.show()
         print(f"[Log] ImageProcessor: Displayed image with title '{title}'.")
 
-    def visualize_original_processed_and_histogram(self, original_img, processed_img, original_title, processed_title, histogram_title):
+    def visualize_original_processed_and_histogram(
+        self,
+        original_img,
+        processed_img,
+        original_title,
+        processed_title,
+        histogram_title
+    ):
         fig, axes = plt.subplots(1, 3, figsize=(15, 5))
 
         # Plot Original Image

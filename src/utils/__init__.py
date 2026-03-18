@@ -1,6 +1,7 @@
 # __init__.py
 
 from .helper import section
+from .paths import dmr_ir_o
 from .paths import base_path
 from .paths import bcd_dataset
 from .paths import thiago_dataset
@@ -11,6 +12,7 @@ from .paths import breast_thermography_dataset
 
 __all__ = [
     "section",
+    "dmr_ir_o",
     "config_1",
     "base_path",
     "bcd_dataset",

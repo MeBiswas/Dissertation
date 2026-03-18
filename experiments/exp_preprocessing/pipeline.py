@@ -4,6 +4,9 @@ import os
 
 from src.preprocessing import ImageProcessor, remove_background, gray_level_reconstruction
 
+# ─────────────────────────────────────────────────────────────────────────────
+# PRE-PROCESSING PIPELINE
+# ─────────────────────────────────────────────────────────────────────────────
 class PreprocessingPipeline:
     def __init__(self, config):
         self.config = config
@@ -28,10 +31,11 @@ class PreprocessingPipeline:
         print(f'\n[Pipeline] Processing: {image_name}')
         
         # Step 1 - Load
-        grayscale_img_loaded = self.processor._load_grayscale(image_path)
+        # grayscale_img_loaded = self.processor._load_grayscale(image_path)
+        final_grayscale_img = self.processor._load_grayscale(image_path)
         
         # Step 2 - Ensure grayscale
-        final_grayscale_img = self.processor.to_grayscale(grayscale_img_loaded)
+        # final_grayscale_img = self.processor.to_grayscale(grayscale_img_loaded)
         
         # Step 3 - Background removal
         bg_removed, breast_mask = remove_background(final_grayscale_img)
