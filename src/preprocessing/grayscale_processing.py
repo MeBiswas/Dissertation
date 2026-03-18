@@ -55,23 +55,6 @@ class ImageProcessor:
         print(f"[Log] ImageProcessor: Displayed original, processed image and its histogram for '{original_title}'.")
 
     def to_grayscale(self, image_array):
-        """
-        Converts a pseudo-color TBI to grayscale using MSB extraction
-        as described in Section II-A of Pramanik et al. (2018):
-
-            'only the most significant byte of each pixel value is
-             extracted to form a grayscale image of breast thermogram'
-
-        In a 24-bit pseudo-color TBI, temperature is encoded such that
-        the R channel carries the primary thermal intensity information
-        with the highest contrast between hot and cool regions.
-        Extracting R directly gives a sparse, multimodal histogram —
-        which is exactly what the SCH-CS step requires.
-
-        Standard cv2.COLOR_BGR2GRAY (0.299R + 0.587G + 0.114B) blends
-        all channels together, producing a dense concentrated histogram
-        where the SCH-CS count threshold rho goes negative.
-        """
         # Already grayscale — return as-is
         if len(image_array.shape) == 2 or (
                 len(image_array.shape) == 3 and image_array.shape[2] == 1):
@@ -89,55 +72,45 @@ class ImageProcessor:
             print("[Warning] ImageProcessor: Unsupported number of channels. "
                   "Returning original image.")
             return image_array
-        
-    def remove_color_scale(self, color_image):
-        """
-        Removes the color scale bar from a pseudo-color TBI.
-        
-        As described in Section II-A of Pramanik et al. (2018):
-            'a color scale of fixed width appears alongside the image
-            at a fixed position... the color scale is first automatically
-            removed from the TBI using the width and positional
-            information of it'
 
-        The FLIR color scale bar is a vertical strip on the RIGHT edge.
-        This method detects its width automatically by scanning from the
-        right edge leftward and finding where image content begins.
-
-        Args:
-            color_image : Original BGR image as loaded by cv2.
-
-        Returns:
-            cropped : BGR image with color scale bar removed.
-            crop_col : The column index where cropping was applied.
-                    Useful for debugging/logging.
-        """
+    def remove_color_scale(self, color_image, image_name=""):
         h, w = color_image.shape[:2]
 
-        # Convert to grayscale just for edge detection
-        gray = cv2.cvtColor(color_image, cv2.COLOR_BGR2GRAY)
+        if h == 120 and w == 160:
+            
+            top    = 18     # remove top parameter overlay (rows 0-17)
+            bottom = 100    # remove bottom FLIR logo strip (rows 105-119)
+            left   = 0      # no overlay on left side
+            right  = 134    # remove color bar (cols 134-159)
 
-        # The color scale bar is typically a uniform vertical gradient
-        # with a sharp vertical edge where it meets the main image.
-        # Strategy: compute column-wise std deviation.
-        # The color bar columns have LOW std (uniform gradient per column).
-        # The image columns have HIGH std (varied tissue texture).
-        col_std = np.std(gray, axis=0)   # shape: (width,)
+            cropped = color_image[top:bottom, left:right]
 
-        # Scan from right edge leftward — find first column with
-        # std above a threshold (= real image content starts here)
-        threshold = 10.0    # experimentally reasonable for FLIR images
-        crop_col  = w       # default: no cropping
+            crop_info = {
+                "format"         : "B (2013-2015, FLIR overlay)",
+                "original_shape" : (h, w),
+                "cropped_shape"  : cropped.shape[:2],
+                "removed_top"    : top,
+                "removed_bottom" : h - bottom,
+                "removed_right"  : w - right,
+            }
+            print(f"[Log] ImageProcessor: Format B detected ({h}x{w}). "
+                f"Removed top={top}px, bottom={h-bottom}px, "
+                f"right={w-right}px. "
+                f"New size: {cropped.shape[0]}x{cropped.shape[1]}.")
 
-        for c in range(w - 1, w // 2, -1):
-            if col_std[c] > threshold:
-                crop_col = c + 1
-                break
+        else:
+            # FORMAT A — 2018-2020 clean image, no cropping needed
+            cropped = color_image.copy()
 
-        cropped = color_image[:, :crop_col, :]
+            crop_info = {
+                "format"         : "A (2018-2020, clean)",
+                "original_shape" : (h, w),
+                "cropped_shape"  : (h, w),
+                "removed_top"    : 0,
+                "removed_bottom" : 0,
+                "removed_right"  : 0,
+            }
+            print(f"[Log] ImageProcessor: Format A detected ({h}x{w}). "
+                f"No cropping needed.")
 
-        print(f"[Log] ImageProcessor: Color scale removed. "
-            f"Cropped at column {crop_col} (original width={w}, "
-            f"new width={crop_col}).")
-
-        return cropped, crop_col
+        return cropped, crop_info
