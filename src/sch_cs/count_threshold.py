@@ -17,10 +17,10 @@ def compute_count_threshold(pb: np.ndarray, plot_histogram: bool = True) -> dict
     section("HISTOGRAM COMPUTATION")
  
     full_hist = cv2.calcHist([pb], [0], None, [256], [0, 256]).flatten()
-    full_hist[0] = 0    # exclude background pixels
+    full_hist[0] = 0 # exclude background pixels
  
     gray_levels = np.where(full_hist > 0)[0]
-    h           = full_hist[gray_levels]
+    h = full_hist[gray_levels]
  
     print(f"  Total histogram bins (0-255)      : 256")
     print(f"  Non-empty bins (excluding bin 0)  : {len(gray_levels)}")
@@ -29,8 +29,10 @@ def compute_count_threshold(pb: np.ndarray, plot_histogram: bool = True) -> dict
     print(f"\n  Sample frequencies (first 15 non-empty bins):")
     print(f"  {'Gray Level':>12}  {'Frequency':>12}")
     print(f"  {'-'*12}  {'-'*12}")
+    
     for gl, freq in zip(gray_levels[:15], h[:15]):
         print(f"  {gl:>12}  {int(freq):>12}")
+        
     if len(gray_levels) > 15:
         print(f"  ... ({len(gray_levels) - 15} more levels not shown)")
  
@@ -55,9 +57,9 @@ def compute_count_threshold(pb: np.ndarray, plot_histogram: bool = True) -> dict
  
     # ── 4. r ──────────────────────────────────────────────────────────────────
     section("VARIABLE r  (number of tall peaks where h(ni) > m)")
-    tall_mask        = h > m
+    tall_mask = h > m
     tall_peak_levels = gray_levels[tall_mask]
-    tall_peak_freqs  = h[tall_mask]
+    tall_peak_freqs = h[tall_mask]
     r = int(np.sum(tall_mask))
     print(f"  r = {r}")
     print(f"\n  Tall peaks:")
@@ -77,7 +79,7 @@ def compute_count_threshold(pb: np.ndarray, plot_histogram: bool = True) -> dict
  
     # ── 7. max_h ──────────────────────────────────────────────────────────────
     section("VARIABLE max_h  (maximum histogram frequency)")
-    max_h       = float(np.max(h))
+    max_h = float(np.max(h))
     max_h_level = int(gray_levels[np.argmax(h)])
     print(f"  max_h = {int(max_h)}  (at gray level {max_h_level})")
  

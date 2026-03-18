@@ -1,5 +1,6 @@
 # path to Dataset file
 base_path = r"..\data\raw"
+dmr_ir_o = r"\DMR-IR-O"
 bcd_dataset = {
     "sick": r"\BCD_Dataset\Sick",
     "healthy": r"\BCD_Dataset\normal",
