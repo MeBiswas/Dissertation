@@ -12,6 +12,12 @@ config_1 = {
     # used iff process_all=False
     "image_index": 95,
     
+    # Cropping settings
+    "enable_cropping": True,
+    "crop_neck_percent": 0.26,      # Crop 18% from top (neck region)
+    "crop_stomach_percent": 0.04,   # Crop 12% from bottom (stomach region)
+    "crop_armpit_percent": 0.10,    # Crop 22% from sides (armpit regions)
+
     # visualization
     "show_visualizations": True,
     
