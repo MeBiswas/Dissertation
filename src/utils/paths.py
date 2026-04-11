@@ -5,6 +5,7 @@ schcs_results_path = r"..\data\sch_cs"
 preprocessed_results_path = r"..\data\preprocessed"
 chm_corrected_results_path = r"..\data\chm_corrected"
 phi_initialized_result_path = r"..\data\phi_initialized"
+level_set_iterated_results_path = r"..\data\level_set_iterated"
 
 # DATASET PATHS
 dmr_ir_o = r"\DMR-IR-O"

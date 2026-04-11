@@ -1,0 +1,30 @@
+{
+  "image_name": "TFRON_V243_12-3-2014_0",
+  "timestamp": "20260411_075108",
+  "config": {
+    "alpha1": 1.0,
+    "alpha2": 1.0,
+    "theta": 0.2,
+    "epsilon": 1.5,
+    "dt": 0.1,
+    "t_stop": 0.05,
+    "max_iterations": 1000
+  },
+  "p_bar_shape": [
+    310,
+    441
+  ],
+  "phi_init_shape": [
+    310,
+    441
+  ],
+  "phi_final_shape": [
+    310,
+    441
+  ],
+  "segmented_sr_pixels": 101331,
+  "segmented_sr_percent": 74.1211323238973,
+  "final_l1": 82.78421552559838,
+  "final_l2": 15.95955118484967,
+  "iterations": 7
+}

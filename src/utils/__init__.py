@@ -23,7 +23,8 @@ from .paths import (
     preprocessed_results_path,
     chm_corrected_results_path,
     breast_thermography_dataset,
-    phi_initialized_result_path
+    phi_initialized_result_path,
+    level_set_iterated_results_path
 )
 
 __all__ = [
@@ -45,5 +46,6 @@ __all__ = [
     "chm_corrected_results_path",
     "load_preprocessing_results",
     "breast_thermography_dataset",
-    "phi_initialized_result_path"
+    "phi_initialized_result_path",
+    "level_set_iterated_results_path"
 ]
