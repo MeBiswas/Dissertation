@@ -19,11 +19,13 @@ from .paths import (
     thiago_dataset,
     schcs_results_path,
     breast_cancer_dataset,
+    sr_splits_results_path,
     dmr_ir_diff_view_dataset,
     preprocessed_results_path,
     chm_corrected_results_path,
     breast_thermography_dataset,
     phi_initialized_result_path,
+    asymmetric_vector_results_path,
     level_set_iterated_results_path
 )
 
@@ -41,11 +43,13 @@ __all__ = [
     "schcs_results_path",
     "load_schcs_results",
     "breast_cancer_dataset",
+    "sr_splits_results_path",
     "dmr_ir_diff_view_dataset",
     "preprocessed_results_path",
     "chm_corrected_results_path",
     "load_preprocessing_results",
     "breast_thermography_dataset",
     "phi_initialized_result_path",
+    "asymmetric_vector_results_path",
     "level_set_iterated_results_path"
 ]
