@@ -32,17 +32,6 @@ def strip_flir_overlay(
     color_img : np.ndarray,
     cfg       : PreprocessConfig = PRE_CFG
 ) -> np.ndarray:
-    """
-    Zero out fixed-position FLIR HUD overlay bands.
-
-    Parameters
-    ----------
-    color_img : np.ndarray  BGR image as loaded by cv2.imread
-
-    Returns
-    -------
-    np.ndarray  BGR image with overlay bands zeroed.
-    """
     h, w  = color_img.shape[:2]
     out   = color_img.copy()
 

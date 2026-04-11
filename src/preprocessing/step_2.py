@@ -29,17 +29,6 @@ def remove_color_scale(
     color_img : np.ndarray,
     cfg       : PreprocessConfig = PRE_CFG
 ) -> np.ndarray:
-    """
-    Remove colour scale bar and calibration square from a FLIR thermogram.
-
-    Parameters
-    ----------
-    color_img : np.ndarray  BGR image (after overlay strip)
-
-    Returns
-    -------
-    np.ndarray  BGR with both artefacts zeroed.
-    """
     h, w  = color_img.shape[:2]
     out   = color_img.copy()
 

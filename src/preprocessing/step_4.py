@@ -37,19 +37,6 @@ def remove_background(
     color_no_scale: np.ndarray,
     cfg          : PreprocessConfig = PRE_CFG
 ) -> Tuple[np.ndarray, np.ndarray]:
-    """
-    Zero out background using Otsu threshold on the green channel.
-
-    Parameters
-    ----------
-    grayscale      : np.ndarray  — blue channel image
-    color_no_scale : np.ndarray  — BGR image with overlay + bar removed
-
-    Returns
-    -------
-    bg_removed : np.ndarray uint8
-    body_mask  : np.ndarray uint8  (1 = body, 0 = background)
-    """
     if cfg.bg_channel == 'green':
         # ── Otsu on green channel (index 1 in BGR) ────────────────────────────
         green    = color_no_scale[:, :, 1]

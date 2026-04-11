@@ -11,9 +11,6 @@ from scipy.signal import find_peaks
 #  STEP 2.1 — Histogram Peak Calculation
 # ─────────────────────────────────────────────────────────────────────────────
 def compute_histogram(pb: np.ndarray) -> Dict:
-    """
-    Build histogram of non-zero pixels in p_b and find local-maxima peaks.
-    """
     print('\n[SCH 2.1] Building histogram...')
     full_hist = np.zeros(256, dtype=np.float64)
     flat = pb[pb > 0].ravel()
@@ -28,5 +25,4 @@ def compute_histogram(pb: np.ndarray) -> Dict:
     peak_freqs      = full_hist[peak_indices]
 
     print(f'  N={N}, R={R}, m=N/R={m:.2f}, peaks found={len(peak_indices)}')
-    return {'full_hist': full_hist, 'peak_indices': peak_indices,
-            'peak_freqs': peak_freqs, 'R': R, 'N': N, 'm': m}
+    return {'full_hist': full_hist, 'peak_indices': peak_indices, 'peak_freqs': peak_freqs, 'R': R, 'N': N, 'm': m}

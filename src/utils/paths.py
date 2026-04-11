@@ -1,5 +1,12 @@
-# path to Dataset file
 base_path = r"..\data\raw"
+
+# RESULTS PATH
+schcs_results_path = r"..\data\sch_cs"
+preprocessed_results_path = r"..\data\preprocessed"
+chm_corrected_results_path = r"..\data\chm_corrected"
+phi_initialized_result_path = r"..\data\phi_initialized"
+
+# DATASET PATHS
 dmr_ir_o = r"\DMR-IR-O"
 bcd_dataset = {
     "sick": r"\BCD_Dataset\Sick",

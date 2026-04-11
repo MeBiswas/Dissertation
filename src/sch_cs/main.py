@@ -1,7 +1,7 @@
-# sch_cs/main.py
+# src/sch_cs/main.py
 
 # ── Standard library ──────────────────────────────────────────────────────────
-from typing import Dict
+from typing import Dict, Optional
 
 # ── Numeric ────────────────────────────────────────────────────────────────
 import numpy as np
@@ -20,30 +20,22 @@ from .step_7 import compute_centroids
 from .step_8 import bounding_box_correction
 from .step_9 import cs_isolation
 from .step_10 import visualize_schcs
+from .storage_config import save_schcs_results, SchCsStorageConfig
 
 # ─────────────────────────────────────────────────────────────────────────────
 #  MAIN ENTRY — run_schcs()
 # ─────────────────────────────────────────────────────────────────────────────
 
 def run_schcs(
-    pb         : np.ndarray,
-    cfg        : SchCsConfig = SCH_CFG,
-    visualize  : bool = True,
-    image_name : str  = ''
+    pb: np.ndarray,
+    cfg: SchCsConfig = SCH_CFG,
+    visualize: bool = True,
+    image_name: str = '',
+    save_results: bool = True,
+    storage_config: Optional[SchCsStorageConfig] = None
 ) -> Dict:
-    """
-    Full SCH-CS pipeline.
-
-    Returns dict with keys:
-        'sr_regions'    — final SRs ready for DLPE LSM initialisation
-        'all_regions'   — all regions after edge filter (before CS isolation)
-        'binary_image'  — thresholded binary image
-        'labeled_image' — label map
-        'th'            — threshold used
-        (+ intermediate dicts from each step)
-    """
     print('\n' + '=' * 60)
-    print(f'  SCH-CS: {image_name}')
+    print(f'  SCH-CS: {image_name if image_name else "Unknown Image"}')
     print('=' * 60)
 
     # ── SCH: compute threshold ────────────────────────────────────────────────
@@ -57,10 +49,20 @@ def run_schcs(
 
     if not label_data['regions']:
         print('\n[Warning] No regions after thresholding.')
-        return {'sr_regions': [], 'all_regions': [],
-                'binary_image': label_data['binary_image'],
-                'labeled_image': label_data['labeled_image'],
-                'th': th_data['th']}
+        results = {
+            'sr_regions': [],
+            'all_regions': [],
+            'binary_image': label_data['binary_image'],
+            'labeled_image': label_data['labeled_image'],
+            'th': th_data['th'],
+            'hist_data': hist_data,
+            'rho_data': rho_data,
+            'tstar_data': tstar_data,
+            'th_data': th_data,
+        }
+        if save_results and image_name:
+            results = save_schcs_results(results, pb, image_name, storage_config)
+        return results
 
     # ── CS: isolate genuine SRs ───────────────────────────────────────────────
     regions = compute_centroids(pb, label_data['regions'])
@@ -70,28 +72,43 @@ def run_schcs(
 
     if not regions:
         print('\n[Warning] All regions removed by edge filter.')
-        return {'sr_regions': [], 'all_regions': [],
-                'binary_image': label_data['binary_image'],
-                'labeled_image': label_data['labeled_image'],
-                'th': th_data['th']}
+        results = {
+            'sr_regions': [],
+            'all_regions': [],
+            'binary_image': label_data['binary_image'],
+            'labeled_image': label_data['labeled_image'],
+            'th': th_data['th'],
+            'hist_data': hist_data,
+            'rho_data': rho_data,
+            'tstar_data': tstar_data,
+            'th_data': th_data,
+        }
+        if save_results and image_name:
+            results = save_schcs_results(results, pb, image_name, storage_config)
+        return results
 
-    regions    = bounding_box_correction(regions, label_data['labeled_image'])
+    regions = bounding_box_correction(regions, label_data['labeled_image'])
     sr_regions = cs_isolation(regions, cfg)
 
     if visualize:
-        visualize_schcs(pb, hist_data, rho_data, th_data,
-                        label_data, sr_regions, regions, image_name)
+        visualize_schcs(pb, hist_data, rho_data, th_data, label_data, sr_regions, regions, image_name)
 
     print(f'\n[Done] {len(sr_regions)} SR(s) ready for DLPE Level Set.')
 
-    return {
-        'sr_regions'   : sr_regions,
-        'all_regions'  : regions,
-        'binary_image' : label_data['binary_image'],
+    results = {
+        'sr_regions': sr_regions,
+        'all_regions': regions,
+        'binary_image': label_data['binary_image'],
         'labeled_image': label_data['labeled_image'],
-        'th'           : th_data['th'],
-        'hist_data'    : hist_data,
-        'rho_data'     : rho_data,
-        'tstar_data'   : tstar_data,
-        'th_data'      : th_data,
+        'th': th_data['th'],
+        'hist_data': hist_data,
+        'rho_data': rho_data,
+        'tstar_data': tstar_data,
+        'th_data': th_data,
     }
+    
+    # Save results for next stages
+    if save_results and image_name:
+        results = save_schcs_results(results, pb, image_name, storage_config)
+    
+    return results

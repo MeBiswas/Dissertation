@@ -19,7 +19,6 @@ def threshold_and_label(
     th  : float,
     cfg : SchCsConfig = SCH_CFG
 ) -> Dict:
-    """Threshold p_b and label 8-connected components."""
     print(f'\n[SCH 2.5] Thresholding (th={th:.2f}) and labelling...')
     binary = (pb > th).astype(np.uint8)
     struct = np.ones((3, 3), dtype=int)
@@ -32,10 +31,8 @@ def threshold_and_label(
         size   = int(mask.sum())
         if size < cfg.min_region_px:
             continue
-        regions.append({'label': k, 'mask': mask,
-                        'coords': coords, 'size': size})
+        regions.append({'label': k, 'mask': mask, 'coords': coords, 'size': size})
 
     print(f'  SR pixels={int(binary.sum())}, '
           f'regions total={n}, after size filter={len(regions)}')
-    return {'binary_image': binary, 'labeled_image': labeled_image,
-            'regions': regions}
+    return {'binary_image': binary, 'labeled_image': labeled_image, 'regions': regions}

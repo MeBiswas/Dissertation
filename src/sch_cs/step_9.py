@@ -21,12 +21,6 @@ def cs_isolation(
     regions : List[Dict],
     cfg     : SchCsConfig = SCH_CFG
 ) -> List[Dict]:
-    """
-    Alternate-elimination centroid isolation.
-    Odd rounds  → drop regions with centroid row < C_avg (too high)
-    Even rounds → drop regions with centroid row > C_avg (too low)
-    Stop when max deviation from mean <= epsilon.
-    """
     print(f'\n[CS 2.9] CS isolation (epsilon={cfg.epsilon})...')
     print(f'  Starting with {len(regions)} regions.')
 

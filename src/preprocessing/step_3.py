@@ -15,11 +15,6 @@ import numpy as np
 # ─────────────────────────────────────────────────────────────────────────────
 
 def extract_blue_channel(color_img: np.ndarray) -> np.ndarray:
-    """
-    Extract the Blue channel from a BGR image.
-
-    Returns  np.ndarray uint8 (H, W) — hot = bright.
-    """
     if color_img.ndim == 2:
         print('[1.3] Already grayscale — returned as-is.')
         return color_img.astype(np.uint8)
