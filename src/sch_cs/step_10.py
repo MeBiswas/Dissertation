@@ -24,10 +24,6 @@ def visualize_schcs(
     all_regions : List[Dict],
     image_name  : str = ''
 ) -> None:
-    """
-    Four-panel figure matching Figure 3 of the paper.
-    (a) p_b  (b) Histogram  (c) All candidates  (d) Final SRs
-    """
     fig, axes = plt.subplots(1, 4, figsize=(22, 6))
     fig.suptitle(
         f'SCH-CS result — {image_name}\n'

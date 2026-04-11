@@ -29,10 +29,6 @@ def bounding_box_correction(
     regions       : List[Dict],
     labeled_image : np.ndarray
 ) -> List[Dict]:
-    """
-    Ensure each centroid lies inside its region.
-    If not, snap to the nearest boundary pixel of that region.
-    """
     print(f'\n[CS 2.8] Centroid boundary correction...')
     H, W        = labeled_image.shape
     n_corrected = 0

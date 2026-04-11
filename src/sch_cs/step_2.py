@@ -10,7 +10,6 @@ import numpy as np
 #  STEP 2.2 — Initial Threshold
 # ─────────────────────────────────────────────────────────────────────────────
 def compute_rho(hist_data: Dict) -> Dict:
-    """Compute Count Threshold rho  [Equation 1]."""
     print('\n[SCH 2.2] Computing rho...')
     peak_freqs = hist_data['peak_freqs']
     peak_idx   = hist_data['peak_indices']
@@ -33,5 +32,4 @@ def compute_rho(hist_data: Dict) -> Dict:
     print(f'  r={r}, V={V:.1f}, C={C:.1f}, max_h={int(max_h)} at level {max_lv}')
     print(f'  rho={rho:.2f} ({status}) → rho_eff={rho_eff:.2f}')
 
-    return {'rho': rho, 'rho_effective': rho_eff,
-            'V': V, 'C': C, 'r': r, 'max_h': max_h, 'max_h_level': max_lv}
+    return {'rho': rho, 'rho_effective': rho_eff, 'V': V, 'C': C, 'r': r, 'max_h': max_h, 'max_h_level': max_lv}

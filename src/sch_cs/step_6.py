@@ -30,18 +30,6 @@ def column_edge_filter(
     image_width: int,
     cfg        : SchCsConfig = SCH_CFG
 ) -> List[Dict]:
-    """
-    Discard regions whose centroid column is within edge_col_pct of either edge.
-
-    Parameters
-    ----------
-    regions     : list from threshold_and_label() — must already have 'centroid'
-    image_width : int  — width of p_b
-
-    Returns
-    -------
-    Filtered list of region dicts.
-    """
     print(f'\n[SCH 2.6] Column-edge guard (edge_col_pct={cfg.edge_col_pct})...')
     margin  = int(image_width * cfg.edge_col_pct)
     col_min = margin

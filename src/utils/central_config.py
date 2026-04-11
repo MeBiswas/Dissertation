@@ -88,7 +88,3 @@ class SchCsConfig:
 
 PRE_CFG = PreprocessConfig()
 SCH_CFG = SchCsConfig()
-
-print('Config ready.')
-print(f'  {PRE_CFG}')
-print(f'  {SCH_CFG}')

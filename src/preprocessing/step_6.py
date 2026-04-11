@@ -19,11 +19,6 @@ def visualize_preprocessing(
     pb             : np.ndarray,
     image_name     : str = ''
 ) -> None:
-    """
-    Six-panel figure matching Figure 2 of the paper.
-    (a) Original  (b) Without scale  (c) Grayscale  (d) BG removed
-    (e) p_b  (f) Histogram of p_b
-    """
     fig, axes = plt.subplots(2, 3, figsize=(16, 10))
     fig.suptitle(
         f'Pre-processing pipeline — {image_name}\n'

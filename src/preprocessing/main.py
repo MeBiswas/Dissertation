@@ -2,7 +2,7 @@
 
 # ── Standard library ──────────────────────────────────────────────────────────
 import os
-from typing import Dict
+from typing import Dict, Optional
 
 # ── Numeric / image ───────────────────────────────────────────────────────────
 import cv2
@@ -16,29 +16,20 @@ from .step_1 import strip_flir_overlay
 from .step_2 import remove_color_scale
 from .step_3 import extract_blue_channel
 from .step_6 import visualize_preprocessing
-from .step_5 import (crop_anatomical_regions,
-                    gray_level_reconstruction)
+from .step_5 import crop_anatomical_regions, gray_level_reconstruction
+from .storage_config import StorageConfig, save_preprocessing_results
 
 # ─────────────────────────────────────────────────────────────────────────────
 #  MAIN ENTRY — run_preprocessing()
 # ─────────────────────────────────────────────────────────────────────────────
 
 def run_preprocessing(
-    image_path : str,
-    cfg        : PreprocessConfig = PRE_CFG,
-    visualize  : bool = True
+    image_path: str,
+    cfg: PreprocessConfig = PRE_CFG,
+    visualize: bool = True,
+    save_results: bool = True,
+    storage_config: Optional[StorageConfig] = None
 ) -> Dict:
-    """
-    Full pre-processing pipeline.
-
-    Returns dict with keys:
-        'pb'             — final p_b (uint8) ready for SCH-CS
-        'grayscale'      — cropped blue channel
-        'bg_removed'     — cropped background-removed image
-        'without_scale'  — colour image after overlay strip + bar removal
-        'original_color' — raw BGR image
-        'image_name'     — filename
-    """
     print('=' * 60)
     print(f'  PRE-PROCESSING: {os.path.basename(image_path)}')
     print('=' * 60)
@@ -73,11 +64,20 @@ def run_preprocessing(
             os.path.basename(image_path)
         )
 
-    return {
-        'pb'            : pb,
-        'grayscale'     : grayscale_cropped,
-        'bg_removed'    : bg_removed[r0:r1, c0:c1],
-        'without_scale' : without_scale[r0:r1, c0:c1],
+    results = {
+        'pb': pb,
+        'grayscale': grayscale_cropped,
+        'bg_removed': bg_removed[r0:r1, c0:c1],
+        'without_scale': without_scale[r0:r1, c0:c1],
         'original_color': original_color[r0:r1, c0:c1],
-        'image_name'    : os.path.basename(image_path),
+        'image_name': os.path.basename(image_path),
+        'base_name': os.path.splitext(os.path.basename(image_path))[0],
     }
+    
+    # Save results for next stages
+    if save_results:
+        if storage_config is None:
+            storage_config = StorageConfig()
+        results = save_preprocessing_results(results, storage_config)
+    
+    return results

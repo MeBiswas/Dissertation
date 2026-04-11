@@ -11,10 +11,6 @@ import numpy as np
 # ─────────────────────────────────────────────────────────────────────────────
 
 def compute_centroids(pb: np.ndarray, regions: List[Dict]) -> List[Dict]:
-    """
-    Intensity-weighted centroid per region.
-    X = sum(I*row) / sum(I),  Y = sum(I*col) / sum(I)
-    """
     print(f'\n[CS 2.7] Weighted centroids for {len(regions)} regions...')
     for reg in regions:
         coords  = reg['coords']
