@@ -1,4 +1,4 @@
-# src/sr_segmentation/vertical_centre.py
+# src/sr_segmentation/step_1.py
 
 """
 Utility: Split Segmented SR into Left and Right Breast Regions
@@ -19,31 +19,24 @@ Note on left/right convention:
     The paper uses patient's perspective (f_v^L = patient's left breast).
     We follow image coordinates and clearly label which is which.
 """
- 
-import cv2
+
 import numpy as np
-import matplotlib.pyplot as plt
-from scipy.ndimage import label
 
 # ─────────────────────────────────────────────────────────────────────────────
 # FIND VERTICAL CENTRE OF BREAST REGION
 # ─────────────────────────────────────────────────────────────────────────────
- 
 def find_vertical_centre(preprocessed_img: np.ndarray) -> int:
     h, w = preprocessed_img.shape
- 
-    # Sum intensities along each column
+
     col_sums = preprocessed_img.sum(axis=0).astype(np.float64)
- 
-    # Search only in the middle third of the image
+
     left_bound  = w // 3
     right_bound = 2 * w // 3
+
     middle_sums = col_sums[left_bound:right_bound]
- 
-    # The sternum appears as a local minimum (dark vertical gap)
+
     centre_col = left_bound + int(np.argmin(middle_sums))
- 
-    print(f"[Split] Vertical centre found at column {centre_col} "
-          f"(image width={w})")
- 
+
+    print(f"[Split] Auto centre at column {centre_col} (width={w})")
+
     return centre_col

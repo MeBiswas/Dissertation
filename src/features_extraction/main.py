@@ -1,77 +1,88 @@
 # src/features_extraction/main.py
 
-import cv2
+"""
+Stage 3 — Step 1: Feature Extraction from Segmented SRs
+Implements Section III-A of Pramanik et al. (2018)
+ 
+Extracts a 21-element feature vector from each breast's segmented SR:
+    - 14 Haralick features  (texture, from GLCM — Equation 22)
+    - 7  Hu's moment invariants (shape)
+    Concatenated → [f_v]_{1×21}
+ 
+Paper reference: Section III-A "Feature Extraction and Classifier Design"
+ 
+    Eq 22: g_{p_b^s}(u,v) = G_sym(u,v / 1, 0°)
+                             ────────────────────────────────
+                             ΣΣ G_sym(u,v / 1, 0°)
+ 
+    where G_sym(u,v/1,0°) = G(u,v/1,0°) + G^T(u,v/1,0°)
+"""
+
 import numpy as np
 
-from .hu_moments import compute_hu_moments
-from .full_features import extract_feature_vector
-from .visualization import visualize_feature_extraction
-from .haralick_features import compute_glcm_normalized, compute_haralick_features
+from .step_1 import extract_sr_region
+from .step_5 import compute_feature_vector
+from .step_6 import save_all
+from .step_7 import visualize_feature_extraction
+from src.utils import create_run_folder
 
 # ═════════════════════════════════════════════════════════════════════════════
 # MAIN — Run feature extraction for both breasts
 # ═════════════════════════════════════════════════════════════════════════════
- 
-def run_feature_extraction(preprocessed_path: str,
-                           sr_left_path: str,
-                           sr_right_path: str,
-                           save_output: bool = True
-                           ) -> tuple[np.ndarray, np.ndarray]:
-    """
-    Runs the full feature extraction for both left and right breasts.
-    Returns f_v_left and f_v_right — inputs to the asymmetry step.
- 
-    Args:
-        preprocessed_path : Path to preprocessed grayscale TBI (p_b)
-        sr_left_path      : Path to segmented SR mask — LEFT  breast
-        sr_right_path     : Path to segmented SR mask — RIGHT breast
-        save_output       : Save visualization
- 
-    Returns:
-        f_v_left  : 21-element feature vector for left  breast
-        f_v_right : 21-element feature vector for right breast
-    """
-    # ── Load images ───────────────────────────────────────────────────────────
-    p_b       = cv2.imread(preprocessed_path, cv2.IMREAD_GRAYSCALE)
-    sr_left   = cv2.imread(sr_left_path,      cv2.IMREAD_GRAYSCALE)
-    sr_right  = cv2.imread(sr_right_path,     cv2.IMREAD_GRAYSCALE)
- 
-    for name, img in [("preprocessed", p_b),
-                      ("SR left",  sr_left),
-                      ("SR right", sr_right)]:
-        if img is None:
-            raise FileNotFoundError(f"Could not load {name} image.")
- 
-    # Binarize SR masks (0 or 1)
-    _, sr_left  = cv2.threshold(sr_left,  127, 1, cv2.THRESH_BINARY)
-    _, sr_right = cv2.threshold(sr_right, 127, 1, cv2.THRESH_BINARY)
- 
-    print("=" * 60)
-    print("LEFT BREAST")
-    print("=" * 60)
-    f_v_left = extract_feature_vector(sr_left, p_b)
- 
-    print("\n" + "=" * 60)
-    print("RIGHT BREAST")
-    print("=" * 60)
-    f_v_right = extract_feature_vector(sr_right, p_b)
- 
-    # ── Optional: visualize one breast ───────────────────────────────────────
-    if save_output:
-        sr_region = p_b * sr_left
-        g_viz = compute_glcm_normalized(sr_region)
-        h_viz = compute_haralick_features(g_viz)
-        hu_viz = compute_hu_moments(sr_region)
+def run_feature_pipeline(
+    preprocessed_img,
+    sr_left,
+    sr_right,
+    config,
+    image_name="image"
+):
+    
+    print(f"[Process] Feature Extraction → {image_name}")
+
+    run_dir = create_run_folder(config.output_dir, image_name)
+
+    # --- LEFT ---
+    print("\n[LEFT]")
+    sr_left_region = extract_sr_region(sr_left, preprocessed_img)
+
+    if sr_left_region is None:
+        f_left = np.zeros(21)
+        g_left = np.zeros((2,2))
+        h_left = np.zeros(14)
+        hu_left = np.zeros(7)
+    else:
+        f_left, g_left, h_left, hu_left = compute_feature_vector(sr_left_region)
+
+    # --- RIGHT ---
+    print("\n[RIGHT]")
+    sr_right_region = extract_sr_region(sr_right, preprocessed_img)
+
+    if sr_right_region is None:
+        f_right = np.zeros(21)
+        g_right = np.zeros((2,2))
+        h_right = np.zeros(14)
+        hu_right = np.zeros(7)
+    else:
+        f_right, g_right, h_right, hu_right = compute_feature_vector(sr_right_region)
+
+    # --- SAVE ---
+    if config.save_results:
+        save_all(run_dir, f_left, f_right, g_left, g_right)
+
+    # --- VISUALIZE (only LEFT for consistency with your code) ---
+    if config.save_visualization or config.show_visualization:
         visualize_feature_extraction(
-            original_gray   = p_b,
-            segmented_sr    = sr_left,
-            g               = g_viz,
-            haralick_feats  = h_viz,
-            hu_feats        = hu_viz,
-            save_path       = "feature_extraction.png"
+            preprocessed_img,
+            sr_left,
+            g_left,
+            h_left,
+            hu_left,
+            run_dir,
+            show=config.show_visualization
         )
- 
-    print("\n[Ready] Both feature vectors extracted.")
-    print("        → Next: Asymmetry vector F = |f_v_left - f_v_right|")
- 
-    return f_v_left, f_v_right
+
+    return {
+        "f_v_left": f_left,
+        "f_v_right": f_right,
+        "run_dir": run_dir
+    }

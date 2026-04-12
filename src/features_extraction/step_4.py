@@ -1,4 +1,4 @@
-# src/features_extraction/hu_moments.py
+# src/features_extraction/step_4.py
 
 import cv2
 import numpy as np
@@ -6,55 +6,7 @@ import numpy as np
 # ═════════════════════════════════════════════════════════════════════════════
 # PART 2 — 7 HU'S MOMENT INVARIANTS  (Hu, 1962 — paper reference [29])
 # ═════════════════════════════════════════════════════════════════════════════
- 
 def compute_hu_moments(image: np.ndarray) -> np.ndarray:
-    """
-    Computes Hu's 7 moment invariants from the segmented SR image.
-    Reference: Hu (1962) — paper reference [29].
- 
-    What are moments?
-        Image moments are weighted sums of pixel intensities that capture
-        the "shape" of a region — similar to how mean and variance
-        summarize a distribution.
- 
-        Raw moment M_{pq} = ΣΣ x^p * y^q * I(x,y)
-        Central moment μ_{pq} = ΣΣ (x-x̄)^p * (y-ȳ)^q * I(x,y)
-        Normalized central moment η_{pq} = μ_{pq} / μ_{00}^γ
- 
-    What makes Hu's moments special?
-        Hu derived 7 combinations of normalized central moments that
-        are INVARIANT to:
-            ✓ Translation  (shifting the image)
-            ✓ Rotation     (rotating the image)
-            ✓ Scale        (resizing the image)
- 
-        This is crucial for TBIs because:
-            - Patients are positioned slightly differently each scan
-            - Breasts vary in size between patients
-            - We need features that capture SHAPE, not position/size
- 
-    The 7 invariants (φ1 ... φ7):
-        φ1 = η20 + η02
-        φ2 = (η20 - η02)² + 4η11²
-        φ3 = (η30 - 3η12)² + (3η21 - η03)²
-        φ4 = (η30 + η12)² + (η21 + η03)²
-        φ5 = (η30-3η12)(η30+η12)[(η30+η12)²-3(η21+η03)²]
-             + (3η21-η03)(η21+η03)[3(η30+η12)²-(η21+η03)²]
-        φ6 = (η20-η02)[(η30+η12)²-(η21+η03)²]
-             + 4η11(η30+η12)(η21+η03)
-        φ7 = (3η21-η03)(η30+η12)[(η30+η12)²-3(η21+η03)²]
-             - (η30-3η12)(η21+η03)[3(η30+η12)²-(η21+η03)²]
- 
-    We use log transform: log|φi| to compress the wide dynamic range.
- 
-    Args:
-        image : Segmented SR image (uint8 grayscale).
-                Background pixels should be 0.
- 
-    Returns:
-        hu_features : 1D float64 array of 7 Hu's moment invariants
-                      Values are log-transformed: log|φi|
-    """
     # Ensure float32 for OpenCV moments computation
     img_float = image.astype(np.float32)
  

@@ -27,13 +27,14 @@ Parameters (from paper Section IV):
     epsilon = 1.5             (smoothness of Heaviside/Dirac approximation)
     dt = 0.1                  (time step for gradient descent)
 """
+
 from .step_5 import iterate_level_set
 from .step_6 import save_results
 from .step_7 import visualize_results
+
 # =========================================================================
 # Pipeline
 # =========================================================================
-
 def run_level_set(p_bar, phi_init, n_sr, image_name, preprocessed_img, config, verbose=True, do_visualize=True, do_save=True):
 
     phi_final, segmented_sr, history = iterate_level_set(

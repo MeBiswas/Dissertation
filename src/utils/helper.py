@@ -6,6 +6,7 @@ import pickle
 import numpy as np
 
 from typing import Dict
+from datetime import datetime
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Helper: pretty divider for console output
@@ -14,6 +15,17 @@ def section(title: str):
     print("\n" + "=" * 60)
     print(f"  {title}")
     print("=" * 60 + "\n")
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Helper: RESULT DIRECTORY
+# ─────────────────────────────────────────────────────────────────────────────
+def create_run_folder(base_dir: str, image_name: str):
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    folder_name = f"{image_name}_{timestamp}"
+    run_path = os.path.join(base_dir, folder_name)
+
+    os.makedirs(run_path, exist_ok=True)
+    return run_path
 
 # ─────────────────────────────────────────────────────────────────────────────
 # PRE-PROCESSING: FUNCTION TO LOAD PREPROCESSED RESULTS FOR NEXT STAGES
