@@ -2,6 +2,7 @@
 
 from .helper import (
     section,
+    create_run_folder,
     load_schcs_results,
     load_preprocessing_results
 )
@@ -26,7 +27,8 @@ from .paths import (
     breast_thermography_dataset,
     phi_initialized_result_path,
     asymmetric_vector_results_path,
-    level_set_iterated_results_path
+    level_set_iterated_results_path,
+    extracted_features_results_path
 )
 
 __all__ = [
@@ -40,6 +42,7 @@ __all__ = [
     "bcd_dataset",
     "thiago_dataset",
     "PreprocessConfig",
+    "create_run_folder",
     "schcs_results_path",
     "load_schcs_results",
     "breast_cancer_dataset",
@@ -51,5 +54,6 @@ __all__ = [
     "breast_thermography_dataset",
     "phi_initialized_result_path",
     "asymmetric_vector_results_path",
-    "level_set_iterated_results_path"
+    "level_set_iterated_results_path",
+    "extracted_features_results_path"
 ]

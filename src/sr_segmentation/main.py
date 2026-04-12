@@ -1,56 +1,56 @@
 # src/sr_segmentation/main.py
 
-import cv2
-import numpy as np
-
-from .visualization import visualize_split
-from .split_mask import split_sr_left_right
+from .step_1 import find_vertical_centre
+from .step_2 import split_sr
+from .step_3 import save_all
+from .step_4 import visualize
+from src.utils import create_run_folder
 
 # ─────────────────────────────────────────────────────────────────────────────
 # MAIN — Full split pipeline
 # ─────────────────────────────────────────────────────────────────────────────
- 
-def run_sr_split(preprocessed_path: str, segmented_sr_path: str, save_output: bool = True) -> tuple[np.ndarray, np.ndarray]:
-    # ── Load preprocessed TBI ─────────────────────────────────────────────────
-    p_b = cv2.imread(preprocessed_path, cv2.IMREAD_GRAYSCALE)
-    if p_b is None:
-        raise FileNotFoundError(f"Could not load: {preprocessed_path}")
- 
-    # ── Load segmented SR (supports .npy and image files) ────────────────────
-    if segmented_sr_path.endswith('.npy'):
-        segmented_sr = np.load(segmented_sr_path).astype(np.uint8)
+def run_sr_split_pipeline(
+    preprocessed_img,
+    segmented_sr,
+    config,
+    image_name="image",
+    centre_col_override=None
+):
+    
+    print(f"[Process] SR Split → {image_name}")
+
+    # --- Step 0: folder ---
+    run_dir = create_run_folder(config.output_dir, image_name)
+
+    # --- Step 1: centre ---
+    if centre_col_override is not None:
+        centre_col = centre_col_override
+        print(f"[Split] Using manual centre: {centre_col}")
     else:
-        segmented_sr = cv2.imread(segmented_sr_path, cv2.IMREAD_GRAYSCALE)
-        if segmented_sr is None:
-            raise FileNotFoundError(f"Could not load: {segmented_sr_path}")
-        _, segmented_sr = cv2.threshold(segmented_sr, 127, 1,
-                                        cv2.THRESH_BINARY)
- 
-    print(f"[Load]  Preprocessed TBI shape : {p_b.shape}")
-    print(f"[Load]  Segmented SR shape     : {segmented_sr.shape}")
- 
-    # ── Split ─────────────────────────────────────────────────────────────────
-    sr_img_left, sr_img_right, centre_col = split_sr_left_right(
-        segmented_sr, p_b
-    )
- 
-    # ── Save ──────────────────────────────────────────────────────────────────
-    cv2.imwrite("sr_left.png",  sr_img_left  * 255)
-    cv2.imwrite("sr_right.png", sr_img_right * 255)
-    np.save("sr_left.npy",  sr_img_left)
-    np.save("sr_right.npy", sr_img_right)
-    print("[Save]  sr_left.png / sr_left.npy")
-    print("[Save]  sr_right.png / sr_right.npy")
- 
-    # ── Visualize ─────────────────────────────────────────────────────────────
-    if save_output:
-        visualize_split(p_b, segmented_sr,
-                        sr_img_left, sr_img_right,
-                        centre_col,
-                        save_path="sr_split_result.png")
- 
-    print("\n[Ready] Pass these into feature_extraction.py:")
-    print("          sr_left_path  = 'sr_left.png'")
-    print("          sr_right_path = 'sr_right.png'")
- 
-    return sr_img_left, sr_img_right
+        centre_col = find_vertical_centre(preprocessed_img)
+
+    # --- Step 2: split ---
+    sr_left, sr_right = split_sr(segmented_sr, centre_col)
+
+    # --- Step 3: save ---
+    if config.save_results:
+        save_all(run_dir, sr_left, sr_right, centre_col)
+
+    # --- Step 4: visualize ---
+    if config.save_visualization or config.show_visualization:
+        visualize(
+            preprocessed_img,
+            segmented_sr,
+            sr_left,
+            sr_right,
+            centre_col,
+            run_dir,
+            show=config.show_visualization
+        )
+
+    return {
+        "sr_left": sr_left,
+        "sr_right": sr_right,
+        "centre_col": centre_col,
+        "run_dir": run_dir
+    }

@@ -1,11 +1,9 @@
 # __init__.py
 
-from .main import run_sr_split
-from .visualization import visualize_split
-from .split_mask import split_sr_left_right
+from .config import SRSplitConfig
+from .main import run_sr_split_pipeline
 
 __all__ = [
-    "run_sr_split",
-    "visualize_split",
-    "split_sr_left_right"
+    "SRSplitConfig",
+    "run_sr_split_pipeline"
 ]

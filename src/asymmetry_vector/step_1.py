@@ -29,17 +29,14 @@ import numpy as np
 # ═════════════════════════════════════════════════════════════════════════════
 # CORE FUNCTION — Asymmetry Feature Vector
 # ═════════════════════════════════════════════════════════════════════════════
- 
-def compute_asymmetry_vector(f_v_left: np.ndarray, f_v_right: np.ndarray) -> np.ndarray:
-    # ── Input validation ──────────────────────────────────────────────────────
+def compute_asymmetry(f_v_left: np.ndarray, f_v_right: np.ndarray) -> np.ndarray:
     if f_v_left.shape != (21,) or f_v_right.shape != (21,):
         raise ValueError(
             f"Expected feature vectors of shape (21,). "
-            f"Got left={f_v_left.shape}, right={f_v_right.shape}.\n"
-            "Make sure feature_extraction.py ran correctly."
+            f"Got left={f_v_left.shape}, right={f_v_right.shape}."
         )
- 
-    # ── Core computation: F = |f_v^(L) - f_v^(R)| ────────────────────────────
-    F = np.abs(f_v_left - f_v_right) # element-wise absolute difference
- 
-    return F # shape: (21,), all values ≥ 0
+
+    F = np.abs(f_v_left - f_v_right)
+
+    print(f"[Asym] Computed F vector → shape: {F.shape}")
+    return F

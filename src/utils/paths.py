@@ -6,8 +6,9 @@ preprocessed_results_path = r"..\data\preprocessed"
 chm_corrected_results_path = r"..\data\chm_corrected"
 segmentation_results_path = r"..\results\segmentation"
 phi_initialized_result_path = r"..\data\phi_initialized"
+extracted_features_results_path = r"..\results\features"
+asymmetric_vector_results_path = r"..\results\asymmetry"
 classification_results_path = r"..\results\classification"
-asymmetric_vector_results_path = r"..\data\asymmetric_features"
 level_set_iterated_results_path = r"..\data\level_set_iterated"
 
 # DATASET PATHS

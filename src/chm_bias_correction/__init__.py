@@ -1,8 +1,9 @@
 # __init__.py
 
-from .main import CHMConfig, CHMCorrector 
+from .config import CHMConfig
+from .main import run_chm_pipeline 
 
 __all__ = [
     "CHMConfig",
-    "CHMCorrector"
+    "run_chm_pipeline"
 ]
