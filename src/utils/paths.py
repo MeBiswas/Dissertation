@@ -2,11 +2,11 @@ base_path = r"..\data\raw"
 
 # RESULTS PATH
 schcs_results_path = r"..\data\sch_cs"
-sr_splits_results_path = r"..\data\splits"
 preprocessed_results_path = r"..\data\preprocessed"
 chm_corrected_results_path = r"..\data\chm_corrected"
-classification_results_path = r"..\data\classification"
+segmentation_results_path = r"..\results\segmentation"
 phi_initialized_result_path = r"..\data\phi_initialized"
+classification_results_path = r"..\results\classification"
 asymmetric_vector_results_path = r"..\data\asymmetric_features"
 level_set_iterated_results_path = r"..\data\level_set_iterated"
 

@@ -39,6 +39,19 @@ config_1 = {
 # ─────────────────────────────────────────────────────────────────────────────
 
 @dataclass
+class SchCsConfig:
+    # ── CS isolation convergence threshold (paper: epsilon = 35) ──────────────
+    epsilon : float = 35.0
+
+    # ── Minimum region size (pixels) — noise removal ──────────────────────────
+    min_region_px : int = 20
+
+    # ── Edge-column guard ─────────────────────────────────────────────────────
+    # Regions whose centroid column is within this fraction of either image edge
+    # are almost certainly FLIR artefacts (text, calibration square), not SRs.
+    edge_col_pct : float = 0.08
+
+@dataclass
 class PreprocessConfig:
     # ── FLIR overlay text bands (fraction of image dimension) ─────────────────
     # FLIR cameras burn parameter readouts into fixed pixel rows/columns.
@@ -71,20 +84,5 @@ class PreprocessConfig:
         'top': 18, 'bottom': 100, 'left': 0, 'right': 134
     })
 
-
-@dataclass
-class SchCsConfig:
-    # ── CS isolation convergence threshold (paper: epsilon = 35) ──────────────
-    epsilon : float = 35.0
-
-    # ── Minimum region size (pixels) — noise removal ──────────────────────────
-    min_region_px : int = 20
-
-    # ── Edge-column guard ─────────────────────────────────────────────────────
-    # Regions whose centroid column is within this fraction of either image edge
-    # are almost certainly FLIR artefacts (text, calibration square), not SRs.
-    edge_col_pct : float = 0.08
-
-
-PRE_CFG = PreprocessConfig()
 SCH_CFG = SchCsConfig()
+PRE_CFG = PreprocessConfig()

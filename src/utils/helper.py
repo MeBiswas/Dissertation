@@ -13,7 +13,7 @@ from typing import Dict
 def section(title: str):
     print("\n" + "=" * 60)
     print(f"  {title}")
-    print("=" * 60)
+    print("=" * 60 + "\n")
 
 # ─────────────────────────────────────────────────────────────────────────────
 # PRE-PROCESSING: FUNCTION TO LOAD PREPROCESSED RESULTS FOR NEXT STAGES
