@@ -7,6 +7,9 @@ import numpy as np
 # ─────────────────────────────────────────────────────────────────────────────
 def split_sr(segmented_sr, centre_col):
     H, W = segmented_sr.shape
+    
+    if centre_col is None:
+        centre_col = W//2
 
     sr_left  = np.zeros((H, W), dtype=np.uint8)
     sr_right = np.zeros((H, W), dtype=np.uint8)
