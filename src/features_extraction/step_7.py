@@ -69,9 +69,10 @@ def visualize_feature_extraction(
 
     # ── Save if requested ──────────────────────────────────────────────────
     if save_path is not None:
-        os.makedirs(os.path.dirname(save_path), exist_ok=True)
-        plt.savefig(save_path, dpi=150, bbox_inches='tight')
-        print(f"[Save] Visualization saved → {save_path}")
+        os.makedirs(save_path, exist_ok=True)
+        file_path = os.path.join(save_path, "feature_visualization.png")
+        plt.savefig(file_path, dpi=150, bbox_inches='tight')
+        print(f"[Save] Visualization saved → {file_path}")
 
     # ── Show / Close ───────────────────────────────────────────────────────
     if show:
