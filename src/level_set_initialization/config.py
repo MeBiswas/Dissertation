@@ -2,6 +2,9 @@
 
 from dataclasses import dataclass
 
+# ----------------------------------------------------------------------------
+# Configuration
+# ----------------------------------------------------------------------------
 @dataclass
 class PhiInitConfig:
     inside_value: float = 4.0
