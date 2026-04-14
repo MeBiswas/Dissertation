@@ -28,6 +28,13 @@ def iterate_level_set(
     # Adaptive ϑ
     vartheta = compute_vartheta(n_sr)
     
+    # ── CRITICAL FIX: normalise image to [0,1] for numerical stability ──────
+    p_max = p_bar.max()
+    if p_max > 1.0:
+        p_norm = p_bar / p_max
+    else:
+        p_norm = p_bar.copy()
+    
     if verbose:
         print(f"\n[Level Set] Initializing iteration loop")
         print(f"n_sr = {n_sr} → ϑ = (0.1×255)/{n_sr} = {vartheta:.4f}")
@@ -53,12 +60,12 @@ def iterate_level_set(
     for n in range(config.max_iterations):
         
         # Step A: Update region means
-        l1, l2 = update_region_means(p_bar, phi, config.epsilon)
+        l1, l2 = update_region_means(p_norm, phi, config.epsilon)
         
         # Step B: Update φ
         phi_curr = phi.copy()
         phi_next = update_phi(
-            phi_curr, p_bar, l1, l2, vartheta,
+            phi_curr, p_norm, l1, l2, vartheta,
             config.alpha1, config.alpha2, config.theta,
             config.epsilon, config.dt
         )
