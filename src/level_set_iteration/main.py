@@ -27,7 +27,11 @@ Parameters (from paper Section IV):
     epsilon = 1.5             (smoothness of Heaviside/Dirac approximation)
     dt = 0.1                  (time step for gradient descent)
 """
+import os
+import numpy as np
+from typing import Dict
 
+from .storage_config import LevelSetConfig
 from .step_5 import iterate_level_set
 from .step_6 import save_results
 from .step_7 import visualize_results
@@ -35,27 +39,57 @@ from .step_7 import visualize_results
 # =========================================================================
 # Pipeline
 # =========================================================================
-def run_level_set(p_bar, phi_init, n_sr, image_name, preprocessed_img, config, verbose=True, do_visualize=True, do_save=True):
-
+def run_level_set(
+    p_bar: np.ndarray,
+    phi_init: np.ndarray,
+    n_sr: int,
+    image_name: str,
+    preprocessed_img: np.ndarray,
+    config: LevelSetConfig,
+    verbose: bool = True,
+    do_visualize: bool = True,
+    do_save: bool = True
+) -> Dict:
+    
+    # Input validation
+    assert p_bar.shape == phi_init.shape, "Shape mismatch: p_bar vs phi_init"
+    assert p_bar.dtype == np.float64, "p_bar must be float64"
+    assert phi_init.dtype == np.float64, "phi_init must be float64"
+    
+    if verbose:
+        print(f"\n{'='*60}")
+        print(f"[Level Set] Processing: {image_name}")
+        print(f"{'='*60}")
+        print(f"  p_bar shape: {p_bar.shape}, dtype: {p_bar.dtype}")
+        print(f"  phi_init shape: {phi_init.shape}, values: {np.unique(phi_init)}")
+        print(f"  n_sr: {n_sr}")
+    
+    # Run iteration
     phi_final, segmented_sr, history = iterate_level_set(
         p_bar, phi_init, n_sr, config, verbose
     )
-
+    
+    # Save results
     saved_paths, run_dir = {}, None
-
     if do_save:
         saved_paths, run_dir = save_results(
             phi_final, segmented_sr, history,
             image_name, p_bar, phi_init, config
         )
-
+        if verbose:
+            print(f"\n[Save] Results saved to: {run_dir}")
+    
+    # Visualize
     if do_visualize:
+        viz_path = None
+        if do_save and run_dir:
+            viz_path = os.path.join(run_dir, f"{image_name}_level_set_results.png")
+        
         visualize_results(
-            preprocessed_img, phi_init,
-            phi_final, segmented_sr,
-            history, config
+            preprocessed_img, phi_init, phi_final, segmented_sr,
+            history, config, save_path=viz_path, show=True
         )
-
+    
     return {
         'phi_final': phi_final,
         'segmented_sr': segmented_sr,

@@ -3,12 +3,10 @@
 from dataclasses import dataclass
 
 # =============================================================================
-# STORAGE CONFIGURATION
+# CONFIGURATION
 # =============================================================================
-
 @dataclass
 class LevelSetConfig:
-    """Configuration parameters for Level Set iteration."""
     # Mathematical parameters
     alpha1: float = 1.0
     alpha2: float = 1.0
@@ -26,4 +24,3 @@ class LevelSetConfig:
     save_segmented_sr: bool = True
     save_history: bool = True
     save_metadata: bool = True
-
