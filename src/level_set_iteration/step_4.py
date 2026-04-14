@@ -17,6 +17,10 @@ def check_stopping(
     if iteration <= 5:
         return False, 1.0, 1.0
     
+    # ── Guard: don't stop if contour has collapsed (no positive phi pixels) ──
+    if (phi_curr > 0).sum() == 0:
+        return False, 1.0, 1.0
+    
     r_prev, _ = pearsonr(phi_prev.ravel(), phi_curr.ravel())
     r_curr, _ = pearsonr(phi_curr.ravel(), phi_next.ravel())
     

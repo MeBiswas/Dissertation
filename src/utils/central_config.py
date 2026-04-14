@@ -73,8 +73,8 @@ class PreprocessConfig:
     bg_sum_thresh : int = 30     # only used when bg_channel == 'sum'
 
     # ── Anatomical crop percentages (of bounding-box height / width) ──────────
-    crop_neck_pct    : float = 0.16
-    crop_stomach_pct : float = 0.14
+    crop_neck_pct    : float = 0.22 #0.16
+    crop_stomach_pct : float = 0.18 #0.18
     crop_armpit_pct  : float = 0.10
 
     # ── DMR-IR Format-B image dimensions ──────────────────────────────────────
