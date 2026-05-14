@@ -10,24 +10,18 @@ import numpy as np
 from src.utils import PRE_CFG, PreprocessConfig
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  STEP 1.5 — Anatomical crop  +  Gray-level reconstruction  →  p_b
+#  STEP 1.5 — Anatomical crop 
 # ─────────────────────────────────────────────────────────────────────────────
 #
 # CROP: Remove neck (top), stomach (bottom), armpits (sides).
 # These are warm regions that would push the threshold upward and cause
 # genuine breast SRs to be missed.
 #
-# RECONSTRUCTION: Background removal can leave thin zero gaps inside the
-# breast boundary.  Row-by-row propagation fills them from the original
-# pixel values.
-#
-# RESULT: p_b — the image the paper feeds directly into SCH-CS.
 # ─────────────────────────────────────────────────────────────────────────────
-
 def crop_anatomical_regions(
     bg_removed : np.ndarray,
-    body_mask  : np.ndarray,
-    cfg        : PreprocessConfig = PRE_CFG
+    body_mask : np.ndarray,
+    cfg : PreprocessConfig = PRE_CFG
 ) -> Tuple[np.ndarray, Tuple[int, int, int, int]]:
     """Crop neck / stomach / armpit bands. Returns (cropped, (r0,r1,c0,c1))."""
     coords = np.argwhere(body_mask > 0)
@@ -38,11 +32,11 @@ def crop_anatomical_regions(
     min_row, min_col = coords.min(axis=0)
     max_row, max_col = coords.max(axis=0)
     height = max_row - min_row
-    width  = max_col - min_col
+    width = max_col - min_col
 
-    top_cut    = min(int(height * cfg.crop_neck_pct),    height // 4)
+    top_cut = min(int(height * cfg.crop_neck_pct), height // 4)
     bottom_cut = min(int(height * cfg.crop_stomach_pct), height // 4)
-    side_cut   = min(int(width  * cfg.crop_armpit_pct),  width  // 4)
+    side_cut = min(int(width  * cfg.crop_armpit_pct), width  // 4)
 
     r0 = min_row + top_cut
     r1 = max_row - bottom_cut
@@ -51,31 +45,5 @@ def crop_anatomical_regions(
 
     cropped = bg_removed[r0:r1, c0:c1].copy()
     print(f'[1.5a] Crop: neck={top_cut}px, stomach={bottom_cut}px, '
-          f'sides={side_cut}px. {bg_removed.shape} → {cropped.shape}')
+        f'sides={side_cut}px. {bg_removed.shape} → {cropped.shape}')
     return cropped, (r0, r1, c0, c1)
-
-
-def gray_level_reconstruction(
-    bg_removed : np.ndarray,
-    grayscale  : np.ndarray
-) -> np.ndarray:
-    """Fill interior zero gaps by row-wise propagation from original values."""
-    assert bg_removed.shape == grayscale.shape
-    rows, cols = bg_removed.shape
-    mid  = cols // 2
-    pb   = bg_removed.copy().astype(np.float32)
-
-    for r in range(rows):
-        for c in range(1, mid):
-            if pb[r, c] == 0 and pb[r, c-1] != 0:
-                pb[r, c] = grayscale[r, c]
-
-    for r in range(rows):
-        for c in range(cols - 2, mid - 1, -1):
-            if pb[r, c] == 0 and pb[r, c+1] != 0:
-                pb[r, c] = grayscale[r, c]
-
-    pb = pb.astype(np.uint8)
-    nz = int((pb > 0).sum())
-    print(f'[1.5b] Reconstruction done. Non-zero pixels: {nz} / {pb.size}.')
-    return pb

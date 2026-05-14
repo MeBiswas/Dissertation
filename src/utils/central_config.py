@@ -37,7 +37,6 @@ config_1 = {
 # ─────────────────────────────────────────────────────────────────────────────
 #  CENTRAL CONFIGURATION
 # ─────────────────────────────────────────────────────────────────────────────
-
 @dataclass
 class SchCsConfig:
     # ── CS isolation convergence threshold (paper: epsilon = 35) ──────────────
