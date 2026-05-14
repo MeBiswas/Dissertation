@@ -13,7 +13,6 @@ import numpy as np
 #
 # NO normalisation, NO CLAHE, NO inversion — raw pixel values only.
 # ─────────────────────────────────────────────────────────────────────────────
-
 def extract_blue_channel(color_img: np.ndarray) -> np.ndarray:
     if color_img.ndim == 2:
         print('[1.3] Already grayscale — returned as-is.')

@@ -1,57 +1,39 @@
 # preprocessing/step_6.py
 
-# ── Numeric / image ───────────────────────────────────────────────────────────
-import cv2
+# ── Numeric / Image ────────────────────────────────────────────────────────
 import numpy as np
 
-# ── Visualisation ─────────────────────────────────────────────────────────────
-import matplotlib.pyplot as plt
-
 # ─────────────────────────────────────────────────────────────────────────────
-#  STEP 1.6 — Visualise  [Figure 2]
+#  STEP 1.6 — Gray-level reconstruction  →  p_b
 # ─────────────────────────────────────────────────────────────────────────────
+#
+# RECONSTRUCTION: Background removal can leave thin zero gaps inside the
+# breast boundary.  Row-by-row propagation fills them from the original
+# pixel values.
+#
+# RESULT: p_b — the image the paper feeds directly into SCH-CS.
+# ─────────────────────────────────────────────────────────────────────────────
+def gray_level_reconstruction(
+    bg_removed : np.ndarray,
+    grayscale : np.ndarray
+) -> np.ndarray:
+    """Fill interior zero gaps by row-wise propagation from original values."""
+    assert bg_removed.shape == grayscale.shape
+    rows, cols = bg_removed.shape
+    mid = cols // 2
+    pb = bg_removed.copy().astype(np.float32)
 
-def visualize_preprocessing(
-    original_color : np.ndarray,
-    without_scale  : np.ndarray,
-    grayscale      : np.ndarray,
-    bg_removed     : np.ndarray,
-    pb             : np.ndarray,
-    image_name     : str = ''
-) -> None:
-    fig, axes = plt.subplots(2, 3, figsize=(16, 10))
-    fig.suptitle(
-        f'Pre-processing pipeline — {image_name}\n'
-        '(matches Figure 2 of Pramanik et al. 2018)',
-        fontsize=13, fontweight='bold'
-    )
+    for r in range(rows):
+        for c in range(1, mid):
+            if pb[r, c] == 0 and pb[r, c-1] != 0:
+                pb[r, c] = grayscale[r, c]
 
-    panels = [
-        (axes[0,0], cv2.cvtColor(original_color, cv2.COLOR_BGR2RGB),
-         '(a) Original pseudo-colour TBI',        False),
-        (axes[0,1], cv2.cvtColor(without_scale,  cv2.COLOR_BGR2RGB),
-         '(b) Overlay stripped + no colour bar',  False),
-        (axes[0,2], grayscale,
-         '(c) Blue channel — hot = bright',       True),
-        (axes[1,0], bg_removed,
-         '(d) Background removed',                True),
-        (axes[1,1], pb,
-         '(e) p_b — after reconstruction\n(input to SCH-CS)', True),
-    ]
-    for ax, img, title, is_gray in panels:
-        ax.imshow(img, cmap='gray' if is_gray else None)
-        ax.set_title(title, fontsize=10)
-        ax.axis('off')
+    for r in range(rows):
+        for c in range(cols - 2, mid - 1, -1):
+            if pb[r, c] == 0 and pb[r, c+1] != 0:
+                pb[r, c] = grayscale[r, c]
 
-    ax_h = axes[1, 2]
-    nz   = pb[pb > 0].ravel()
-    ax_h.hist(nz, bins=128, range=(1, 256), color='steelblue', alpha=0.8)
-    ax_h.axvline(nz.mean(), color='red', ls='--',
-                 label=f'mean = {nz.mean():.1f}')
-    ax_h.set_title('(f) Histogram of p_b\n(non-zero pixels only)', fontsize=10)
-    ax_h.set_xlabel('Pixel intensity')
-    ax_h.set_ylabel('Frequency')
-    ax_h.legend(fontsize=8)
-
-    plt.tight_layout()
-    plt.show()
+    pb = pb.astype(np.uint8)
+    nz = int((pb > 0).sum())
+    print(f'[1.5b] Reconstruction done. Non-zero pixels: {nz} / {pb.size}.')
+    return pb

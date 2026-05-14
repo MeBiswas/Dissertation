@@ -24,25 +24,24 @@ from src.utils import PRE_CFG, PreprocessConfig
 #    Detected as: very bright blue (> 240), small (< 0.5% of image),
 #    located below the top 40%, and roughly square (aspect ratio < 3).
 # ─────────────────────────────────────────────────────────────────────────────
-
 def remove_color_scale(
     color_img : np.ndarray,
-    cfg       : PreprocessConfig = PRE_CFG
+    cfg : PreprocessConfig = PRE_CFG
 ) -> np.ndarray:
-    h, w  = color_img.shape[:2]
-    out   = color_img.copy()
+    h, w = color_img.shape[:2]
+    out = color_img.copy()
 
     # ── Format B: fixed crop ──────────────────────────────────────────────────
     if h == cfg.format_b_h and w == cfg.format_b_w:
-        c      = cfg.format_b_crop
+        c = cfg.format_b_crop
         result = out[c['top']:c['bottom'], c['left']:c['right']].copy()
         print(f'[1.2] Format-B ({h}×{w}). Hard-cropped to '
-              f'{result.shape[0]}×{result.shape[1]}.')
+            f'{result.shape[0]}×{result.shape[1]}.')
         return result
 
     # ── A) Right-side colour bar ───────────────────────────────────────────────
     blue_col_means = out[:, :, 0].mean(axis=0)   # B in BGR = index 0
-    bar_start      = w   # will move left while bar columns are found
+    bar_start = w   # will move left while bar columns are found
 
     for col in range(w - 1, w - 1 - int(w * cfg.colorbar_search_pct), -1):
         if blue_col_means[col] >= cfg.colorbar_blue_thresh:
@@ -57,16 +56,16 @@ def remove_color_scale(
         print('[1.2] No colour bar detected.')
 
     # ── B) Calibration square ─────────────────────────────────────────────────
-    blue_ch      = out[:, :, 0]
-    bright_mask  = (blue_ch > 240).astype(np.uint8)
+    blue_ch = out[:, :, 0]
+    bright_mask = (blue_ch > 240).astype(np.uint8)
     bright_mask[:int(h * 0.40), :] = 0   # only look below top 40%
 
     lbl, n = label(bright_mask)
-    total  = h * w
+    total = h * w
     n_removed = 0
 
     for k in range(1, n + 1):
-        m    = lbl == k
+        m = lbl == k
         size = int(m.sum())
         if size > 0.005 * total:
             continue   # too large — genuine tissue
@@ -79,7 +78,7 @@ def remove_color_scale(
         out[m] = 0
         n_removed += 1
         print(f'[1.2] Calibration square removed: '
-              f'size={size}px, bbox=({r1-r0}×{c1-c0}), aspect={ar:.2f}.')
+            f'size={size}px, bbox=({r1-r0}×{c1-c0}), aspect={ar:.2f}.')
 
     if n_removed == 0:
         print('[1.2] No calibration square detected.')

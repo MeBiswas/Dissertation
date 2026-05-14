@@ -27,7 +27,6 @@ from src.utils import PRE_CFG, PreprocessConfig
 #   The calibration square (bright blue rectangle, lower half) is handled
 #   separately in remove_color_scale because it is a distinct artefact.
 # ─────────────────────────────────────────────────────────────────────────────
-
 def strip_flir_overlay(
     color_img : np.ndarray,
     cfg       : PreprocessConfig = PRE_CFG
@@ -40,11 +39,11 @@ def strip_flir_overlay(
     right_px = int(w * cfg.overlay_right_pct)
 
     zeroed = []
-    if top_px   > 0:
-        out[:top_px, :]    = 0
+    if top_px > 0:
+        out[:top_px, :] = 0
         zeroed.append(f'top {top_px}px')
-    if left_px  > 0:
-        out[:, :left_px]   = 0
+    if left_px > 0:
+        out[:, :left_px] = 0
         zeroed.append(f'left {left_px}px')
     if right_px > 0:
         out[:, w-right_px:] = 0

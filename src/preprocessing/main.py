@@ -15,14 +15,14 @@ from .step_4 import remove_background
 from .step_1 import strip_flir_overlay
 from .step_2 import remove_color_scale
 from .step_3 import extract_blue_channel
-from .step_6 import visualize_preprocessing
-from .step_5 import crop_anatomical_regions, gray_level_reconstruction
+from .step_7 import visualize_preprocessing
+from .step_5 import crop_anatomical_regions
+from .step_6 import gray_level_reconstruction
 from .storage_config import StorageConfig, save_preprocessing_results
 
 # ─────────────────────────────────────────────────────────────────────────────
 #  MAIN ENTRY — run_preprocessing()
 # ─────────────────────────────────────────────────────────────────────────────
-
 def run_preprocessing(
     image_path: str,
     cfg: PreprocessConfig = PRE_CFG,
@@ -39,10 +39,10 @@ def run_preprocessing(
         raise FileNotFoundError(f'Cannot read: {image_path}')
     print(f'[1.0] Loaded {original_color.shape[0]}×{original_color.shape[1]}.')
 
-    # Steps 1.1 → 1.2 → 1.3 → 1.4 → 1.5
-    clean_color   = strip_flir_overlay(original_color, cfg)
+    # Steps 1.1 → 1.2 → 1.3 → 1.4 → 1.5 → 1.6
+    clean_color = strip_flir_overlay(original_color, cfg)
     without_scale = remove_color_scale(clean_color, cfg)
-    grayscale     = extract_blue_channel(without_scale)
+    grayscale = extract_blue_channel(without_scale)
     bg_removed, body_mask = remove_background(grayscale, without_scale, cfg)
 
     cropped_bg, (r0, r1, c0, c1) = crop_anatomical_regions(
@@ -52,12 +52,12 @@ def run_preprocessing(
     pb = gray_level_reconstruction(cropped_bg, grayscale_cropped)
 
     print(f'\n[Done] p_b shape={pb.shape}, '
-          f'non-zero={int((pb>0).sum())} pixels.')
+        f'non-zero={int((pb>0).sum())} pixels.')
 
     if visualize:
         visualize_preprocessing(
             original_color[r0:r1, c0:c1],
-            without_scale[r0:r1,  c0:c1],
+            without_scale[r0:r1, c0:c1],
             grayscale_cropped,
             bg_removed[r0:r1, c0:c1],
             pb,
@@ -68,9 +68,9 @@ def run_preprocessing(
         'pb': pb,
         'grayscale': grayscale_cropped,
         'bg_removed': bg_removed[r0:r1, c0:c1],
+        'image_name': os.path.basename(image_path),
         'without_scale': without_scale[r0:r1, c0:c1],
         'original_color': original_color[r0:r1, c0:c1],
-        'image_name': os.path.basename(image_path),
         'base_name': os.path.splitext(os.path.basename(image_path))[0],
     }
     

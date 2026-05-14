@@ -9,7 +9,6 @@ from typing import Dict, Optional
 # =============================================================================
 # STORAGE CONFIGURATION
 # =============================================================================
-
 class StorageConfig:
     """Configuration for storing preprocessing results."""
     def __init__(self, output_dir: str = "data/preprocessed"):
