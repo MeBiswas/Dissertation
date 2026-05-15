@@ -17,11 +17,11 @@ def split_sr(segmented_sr, centre_col):
     sr_left[:, :centre_col]  = segmented_sr[:, :centre_col]
     sr_right[:, centre_col:] = segmented_sr[:, centre_col:]
 
-    n_left  = sr_left.sum()
+    n_left = sr_left.sum()
     n_right = sr_right.sum()
 
     print(f"[Split] Left pixels : {n_left}")
-    print(f"[Split] Right pixels: {n_right}")
+    print(f"[Split] Right pixels : {n_right}")
 
     if n_left == 0:
         print("[Warn] No SR in LEFT half")

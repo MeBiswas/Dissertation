@@ -14,13 +14,13 @@ def dirac_smooth(phi: np.ndarray, epsilon: float) -> np.ndarray:
 def compute_curvature(phi: np.ndarray) -> np.ndarray:
     phi_y, phi_x = np.gradient(phi)
     grad_mag = np.sqrt(phi_x**2 + phi_y**2 + 1e-10)
-    
+
     nx = phi_x / grad_mag
     ny = phi_y / grad_mag
-    
+
     _, dnx_dx = np.gradient(nx)
     dny_dy, _ = np.gradient(ny)
-    
+
     return dnx_dx + dny_dy
 
 def compute_laplacian(phi: np.ndarray) -> np.ndarray:

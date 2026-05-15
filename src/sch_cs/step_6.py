@@ -24,18 +24,17 @@ from src.utils import SCH_CFG, SchCsConfig
 # The paper does not state this explicitly but it is implied by the dataset
 # structure and confirmed by inspection of Figure 3(c).
 # ─────────────────────────────────────────────────────────────────────────────
-
 def column_edge_filter(
-    regions    : List[Dict],
-    image_width: int,
-    cfg        : SchCsConfig = SCH_CFG
+    regions : List[Dict],
+    image_width : int,
+    cfg : SchCsConfig = SCH_CFG
 ) -> List[Dict]:
     print(f'\n[SCH 2.6] Column-edge guard (edge_col_pct={cfg.edge_col_pct})...')
-    margin  = int(image_width * cfg.edge_col_pct)
+    margin = int(image_width * cfg.edge_col_pct)
     col_min = margin
     col_max = image_width - margin
 
-    kept     = []
+    kept = []
     rejected = []
     for reg in regions:
         _, Y = reg['centroid']

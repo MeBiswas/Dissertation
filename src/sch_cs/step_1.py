@@ -22,7 +22,11 @@ def compute_histogram(pb: np.ndarray) -> Dict:
     m = N / R
 
     peak_indices, _ = find_peaks(full_hist, height=1)
-    peak_freqs      = full_hist[peak_indices]
+    peak_freqs = full_hist[peak_indices]
 
     print(f'  N={N}, R={R}, m=N/R={m:.2f}, peaks found={len(peak_indices)}')
-    return {'full_hist': full_hist, 'peak_indices': peak_indices, 'peak_freqs': peak_freqs, 'R': R, 'N': N, 'm': m}
+    return {
+        'full_hist': full_hist,
+        'peak_indices': peak_indices,
+        'peak_freqs': peak_freqs, 'R': R, 'N': N, 'm': m
+    }

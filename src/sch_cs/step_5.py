@@ -13,10 +13,9 @@ from src.utils import SCH_CFG, SchCsConfig
 # ─────────────────────────────────────────────────────────────────────────────
 #  STEP 2.5 — Threshold + label connected regions
 # ─────────────────────────────────────────────────────────────────────────────
-
 def threshold_and_label(
-    pb  : np.ndarray,
-    th  : float,
+    pb : np.ndarray,
+    th : float,
     cfg : SchCsConfig = SCH_CFG
 ) -> Dict:
     print(f'\n[SCH 2.5] Thresholding (th={th:.2f}) and labelling...')
@@ -26,13 +25,22 @@ def threshold_and_label(
 
     regions = []
     for k in range(1, n + 1):
-        mask   = labeled_image == k
+        mask = labeled_image == k
         coords = np.argwhere(mask)
-        size   = int(mask.sum())
+        size = int(mask.sum())
         if size < cfg.min_region_px:
             continue
-        regions.append({'label': k, 'mask': mask, 'coords': coords, 'size': size})
+        regions.append({
+            'label': k,
+            'mask': mask,
+            'coords': coords,
+            'size': size
+        })
 
     print(f'  SR pixels={int(binary.sum())}, '
           f'regions total={n}, after size filter={len(regions)}')
-    return {'binary_image': binary, 'labeled_image': labeled_image, 'regions': regions}
+    return {
+        'binary_image': binary,
+        'labeled_image': labeled_image,
+        'regions': regions
+    }

@@ -3,7 +3,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def visualize(pb, chm_local, p_bar, eps=1e-10, save_path=None, show=True):
+def visualize_chm(pb, chm_local, p_bar, eps=1e-10, save_path=None, show=True):
     fig, axes = plt.subplots(1, 4, figsize=(20, 5))
 
     axes[0].imshow(pb, cmap='hot')
@@ -17,10 +17,10 @@ def visualize(pb, chm_local, p_bar, eps=1e-10, save_path=None, show=True):
     axes[2].set_title("Corrected")
 
     mid = pb.shape[0] // 2
-    
+
     def norm01(x):
         return (x - x.min()) / (x.max() - x.min() + eps)
-    
+
     axes[3].plot(norm01(pb[mid].astype(np.float64)), label="original", color='steelblue', lw=1.5)
     axes[3].plot(norm01(p_bar[mid]), label="corrected", color='orangered', lw=1.5)
     axes[3].legend()

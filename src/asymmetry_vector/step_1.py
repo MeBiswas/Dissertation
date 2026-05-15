@@ -1,5 +1,7 @@
 # src/asymmetry_vector/step_1.py
 
+import numpy as np
+
 """
 Stage 3 — Step 2: Asymmetry Feature Vector
 Implements Section III-A of Pramanik et al. (2018)
@@ -23,8 +25,6 @@ Clinical insight:
     An abnormal breast will show asymmetry → F will have large values.
     This asymmetry signal is what the neural network learns to classify.
 """
-
-import numpy as np
 
 # ═════════════════════════════════════════════════════════════════════════════
 # CORE FUNCTION — Asymmetry Feature Vector

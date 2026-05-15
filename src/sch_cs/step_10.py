@@ -13,16 +13,15 @@ import matplotlib.pyplot as plt
 # ─────────────────────────────────────────────────────────────────────────────
 #  STEP 2.10 — Visualise SCH-CS result  [Figure 3]
 # ─────────────────────────────────────────────────────────────────────────────
-
 def visualize_schcs(
-    pb          : np.ndarray,
-    hist_data   : Dict,
-    rho_data    : Dict,
-    th_data     : Dict,
-    label_data  : Dict,
-    sr_regions  : List[Dict],
+    pb : np.ndarray,
+    hist_data : Dict,
+    rho_data : Dict,
+    th_data : Dict,
+    label_data : Dict,
+    sr_regions : List[Dict],
     all_regions : List[Dict],
-    image_name  : str = ''
+    image_name : str = ''
 ) -> None:
     fig, axes = plt.subplots(1, 4, figsize=(22, 6))
     fig.suptitle(
@@ -31,8 +30,8 @@ def visualize_schcs(
         fontsize=12, fontweight='bold'
     )
 
-    th        = th_data['th']
-    rho_eff   = rho_data['rho_effective']
+    th = th_data['th']
+    rho_eff = rho_data['rho_effective']
     full_hist = hist_data['full_hist'].copy()
     full_hist[0] = 0
 
@@ -43,10 +42,8 @@ def visualize_schcs(
 
     # (b) Histogram
     axes[1].bar(range(256), full_hist, color='steelblue', alpha=0.6, width=1)
-    axes[1].axhline(rho_eff, color='red',    lw=2, ls='-.',
-                    label=f'rho_eff={rho_eff:.0f}')
-    axes[1].axvline(th,      color='orange', lw=2, ls='--',
-                    label=f'th={th:.1f}')
+    axes[1].axhline(rho_eff, color='red', lw=2, ls='-.', label=f'rho_eff={rho_eff:.0f}')
+    axes[1].axvline(th, color='orange', lw=2, ls='--', label=f'th={th:.1f}')
     axes[1].set_title('(b) Histogram of p_b', fontsize=10)
     axes[1].set_xlabel('Gray level')
     axes[1].set_ylabel('Frequency')

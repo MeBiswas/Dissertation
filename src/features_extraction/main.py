@@ -1,5 +1,13 @@
 # src/features_extraction/main.py
 
+import numpy as np
+
+from .step_1 import extract_sr_region
+from .step_5 import compute_feature_vector
+from .step_6 import save_all
+from .step_7 import visualize_feature_extraction
+from src.utils import create_run_folder
+
 """
 Stage 3 — Step 1: Feature Extraction from Segmented SRs
 Implements Section III-A of Pramanik et al. (2018)
@@ -18,14 +26,6 @@ Paper reference: Section III-A "Feature Extraction and Classifier Design"
     where G_sym(u,v/1,0°) = G(u,v/1,0°) + G^T(u,v/1,0°)
 """
 
-import numpy as np
-
-from .step_1 import extract_sr_region
-from .step_5 import compute_feature_vector
-from .step_6 import save_all
-from .step_7 import visualize_feature_extraction
-from src.utils import create_run_folder
-
 # ═════════════════════════════════════════════════════════════════════════════
 # MAIN — Run feature extraction for both breasts
 # ═════════════════════════════════════════════════════════════════════════════
@@ -36,7 +36,6 @@ def run_feature_pipeline(
     config,
     image_name="image"
 ):
-    
     print(f"[Process] Feature Extraction → {image_name}")
 
     run_dir = create_run_folder(config.output_dir, image_name)

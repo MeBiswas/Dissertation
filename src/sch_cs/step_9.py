@@ -16,10 +16,9 @@ from src.utils import SCH_CFG, SchCsConfig
 #
 # Identical to v1 (already correct).  Reproduced here for completeness.
 # ─────────────────────────────────────────────────────────────────────────────
-
 def cs_isolation(
     regions : List[Dict],
-    cfg     : SchCsConfig = SCH_CFG
+    cfg : SchCsConfig = SCH_CFG
 ) -> List[Dict]:
     print(f'\n[CS 2.9] CS isolation (epsilon={cfg.epsilon})...')
     print(f'  Starting with {len(regions)} regions.')
@@ -29,12 +28,12 @@ def cs_isolation(
         return regions
 
     active = regions.copy()
-    rnd    = 0
+    rnd = 0
 
     while len(active) > 1:
-        rnd    += 1
-        X_vals  = [r['centroid'][0] for r in active]
-        C_avg   = float(np.mean(X_vals))
+        rnd += 1
+        X_vals = [r['centroid'][0] for r in active]
+        C_avg = float(np.mean(X_vals))
 
         if rnd % 2 == 1:
             surviving = [r for r in active if r['centroid'][0] >= C_avg]
@@ -47,10 +46,10 @@ def cs_isolation(
             print(f'  Round {rnd}: all eliminated — reverting.')
             break
 
-        new_X   = [r['centroid'][0] for r in surviving]
+        new_X = [r['centroid'][0] for r in surviving]
         new_avg = float(np.mean(new_X))
         max_dev = max(abs(x - new_avg) for x in new_X)
-        active  = surviving
+        active = surviving
 
         print(f'  Round {rnd}: C_avg={C_avg:.1f}, {direction}. '
               f'Survivors={len(active)}, max_dev={max_dev:.2f}')

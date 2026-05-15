@@ -16,4 +16,8 @@ def compute_threshold(pb: np.ndarray, tstar_data: Dict) -> Dict:
     th = m_p if t_star < m_p else t_star
     reason = ('th = m(p)' if t_star < m_p else 'th = t*')
     print(f'  m(p)={m_p:.2f}, t*={t_star:.2f} → {reason} = {th:.2f}')
-    return {'th': th, 'm_p': m_p, 't_star': t_star}
+    return {
+        'th': th,
+        'm_p': m_p,
+        't_star': t_star
+    }

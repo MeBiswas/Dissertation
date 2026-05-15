@@ -24,17 +24,16 @@ import numpy as np
 #   least one 4-connected neighbour that is NOT in the region.
 #   This guarantees the corrected centroid is always a valid region pixel.
 # ─────────────────────────────────────────────────────────────────────────────
-
 def bounding_box_correction(
-    regions       : List[Dict],
+    regions : List[Dict],
     labeled_image : np.ndarray
 ) -> List[Dict]:
     print(f'\n[CS 2.8] Centroid boundary correction...')
-    H, W        = labeled_image.shape
+    H, W = labeled_image.shape
     n_corrected = 0
 
     for reg in regions:
-        X, Y   = reg['centroid']
+        X, Y = reg['centroid']
         xi, yj = int(round(X)), int(round(Y))
 
         in_bounds = (0 <= xi < H) and (0 <= yj < W)
@@ -46,9 +45,9 @@ def bounding_box_correction(
 
         # ── Build boundary pixel set ──────────────────────────────────────────
         # Use erosion: boundary = mask AND NOT eroded_mask
-        mask_u8  = reg['mask'].astype(np.uint8)
-        kernel   = np.ones((3, 3), np.uint8)
-        eroded   = cv2.erode(mask_u8, kernel, iterations=1)
+        mask_u8 = reg['mask'].astype(np.uint8)
+        kernel = np.ones((3, 3), np.uint8)
+        eroded = cv2.erode(mask_u8, kernel, iterations=1)
         boundary = np.argwhere((mask_u8 - eroded) > 0)   # shape (N, 2)
 
         if len(boundary) == 0:
@@ -56,14 +55,14 @@ def bounding_box_correction(
             boundary = reg['coords']
 
         # Nearest boundary pixel to original centroid
-        dists    = np.linalg.norm(boundary - np.array([X, Y]), axis=1)
-        nearest  = boundary[int(np.argmin(dists))]
-        new_c    = (float(nearest[0]), float(nearest[1]))
+        dists = np.linalg.norm(boundary - np.array([X, Y]), axis=1)
+        nearest = boundary[int(np.argmin(dists))]
+        new_c = (float(nearest[0]), float(nearest[1]))
 
         print(f'  R({reg["label"]:>4}): ({X:.1f},{Y:.1f}) outside → '
               f'snapped to boundary pixel ({new_c[0]:.1f},{new_c[1]:.1f})')
 
-        reg['centroid']           = new_c
+        reg['centroid'] = new_c
         reg['centroid_corrected'] = True
         n_corrected += 1
 
