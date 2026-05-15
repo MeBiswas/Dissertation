@@ -5,7 +5,7 @@ from dataclasses import dataclass
 @dataclass
 class CHMConfig:
     window_size: int = 9
-    order: int = 2 #1
+    order: int = 1
     eps: float = 1e-10
     
     save_visualization: bool = False

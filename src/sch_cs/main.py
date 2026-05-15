@@ -25,7 +25,6 @@ from .storage_config import save_schcs_results, SchCsStorageConfig
 # ─────────────────────────────────────────────────────────────────────────────
 #  MAIN ENTRY — run_schcs()
 # ─────────────────────────────────────────────────────────────────────────────
-
 def run_schcs(
     pb: np.ndarray,
     cfg: SchCsConfig = SCH_CFG,

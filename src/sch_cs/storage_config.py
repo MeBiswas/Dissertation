@@ -11,7 +11,6 @@ from typing import Dict, Optional
 # =============================================================================
 # STORAGE CONFIGURATION
 # =============================================================================
-
 class SchCsStorageConfig:
     """Configuration for storing SCH-CS results."""
     def __init__(self, output_dir: str = "data/schcs_results"):

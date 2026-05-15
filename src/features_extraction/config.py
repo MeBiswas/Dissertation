@@ -2,6 +2,9 @@
 
 from dataclasses import dataclass
 
+# ═════════════════════════════════════════════════════════════════════════════
+# CONFIGURATION
+# ═════════════════════════════════════════════════════════════════════════════
 @dataclass
 class FeatureConfig:
     output_dir: str = "feature_extraction"

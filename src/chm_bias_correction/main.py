@@ -5,7 +5,7 @@ from .step_1 import compute_chm_local
 from .step_2 import compute_nc
 from .step_3 import compute_p_bar
 from .step_4 import save_all_outputs
-from .step_5 import visualize
+from .step_5 import visualize_chm
 from src.utils import create_run_folder
 
 def run_chm_pipeline(image, config, image_name="image"):
@@ -35,7 +35,7 @@ def run_chm_pipeline(image, config, image_name="image"):
         if config.save_visualization:
             viz_path = os.path.join(run_dir, "visualization.png")
 
-        visualize(
+        visualize_chm(
             image,
             chm_local,
             p_bar,

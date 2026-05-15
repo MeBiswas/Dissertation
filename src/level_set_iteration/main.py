@@ -1,5 +1,14 @@
 # src/level_set_iteration/main.py
 
+import os
+import numpy as np
+from typing import Dict
+
+from .step_6 import save_results
+from .step_5 import iterate_level_set
+from .step_7 import visualize_results
+from .storage_config import LevelSetConfig
+
 """
 Stage 2 — Step 3: DLPE Level Set Iteration Loop
 Implements Equations 18, 19, 20, 21 from Pramanik et al. (2018)
@@ -27,17 +36,9 @@ Parameters (from paper Section IV):
     epsilon = 1.5             (smoothness of Heaviside/Dirac approximation)
     dt = 0.1                  (time step for gradient descent)
 """
-import os
-import numpy as np
-from typing import Dict
-
-from .storage_config import LevelSetConfig
-from .step_5 import iterate_level_set
-from .step_6 import save_results
-from .step_7 import visualize_results
 
 # =========================================================================
-# Pipeline
+# LEVEL SET ITERATION
 # =========================================================================
 def run_level_set(
     p_bar: np.ndarray,
@@ -97,4 +98,86 @@ def run_level_set(
         'saved_paths': saved_paths,
         'run_dir': run_dir,
         'image_name': image_name
+    }
+    
+# =========================================================================
+# LEVEL SET ITERATION PER SR
+# =========================================================================
+def run_level_set_per_sr(
+    p_bar : np.ndarray,
+    sr_regions : list,
+    image_name : str,
+    preprocessed_img : np.ndarray,
+    config : LevelSetConfig,
+    margin : int  = 40,
+    verbose : bool = True,
+    do_visualize : bool = True,
+    do_save : bool = True,
+) -> dict:
+    H, W = p_bar.shape
+    combined_segmented = np.zeros((H, W), dtype=np.uint8)
+    combined_phi = np.full((H, W), -4.0, dtype=np.float64)
+    all_histories = []
+
+    for idx, sr in enumerate(sr_regions):
+        coords = sr['coords']
+        r0 = max(0, int(coords[:, 0].min()) - margin)
+        r1 = min(H, int(coords[:, 0].max()) + margin)
+        c0 = max(0, int(coords[:, 1].min()) - margin)
+        c1 = min(W, int(coords[:, 1].max()) + margin)
+
+        # Crop both p_bar and phi to this window
+        pb_crop = p_bar[r0:r1, c0:c1].copy()
+
+        # Build a phi seed for just this SR in the crop coordinate space
+        phi_crop = np.full_like(pb_crop, -4.0, dtype=np.float64)
+        phi_crop[sr['mask'][r0:r1, c0:c1]] = 4.0
+
+        if verbose:
+            print(f"\n[SR {idx+1}/{len(sr_regions)}] "
+                  f"label={sr['label']}, size={sr['size']}px, "
+                  f"crop=[{r0}:{r1},{c0}:{c1}]")
+
+        phi_final_crop, seg_crop, history = iterate_level_set(
+            pb_crop, phi_crop, n_sr=1, config=config, verbose=verbose)
+
+        # Paste result back into full image
+        combined_segmented[r0:r1, c0:c1] |= seg_crop
+        combined_phi[r0:r1, c0:c1] = np.maximum(
+            combined_phi[r0:r1, c0:c1], phi_final_crop
+        )
+        all_histories.append(history)
+
+    # Merge histories for plotting
+    merged = {k: [] for k in all_histories[0]}
+    for h in all_histories:
+        for k in h:
+            merged[k].extend(h[k])
+
+    # Save / visualise using existing run_level_set infrastructure
+    saved_paths, run_dir = {}, None
+    if do_save:
+        saved_paths, run_dir = save_results(
+            combined_phi, combined_segmented, merged,
+            image_name, p_bar, None, config
+        )
+    if do_visualize:
+        from scipy.ndimage import label as scipy_label
+        # Build a dummy phi_init for visualisation
+        phi_init_display = np.full((H,W), -4.0)
+        for sr in sr_regions:
+            phi_init_display[sr['mask']] = 4.0
+        visualize_results(
+            preprocessed_img, phi_init_display, combined_phi,
+            combined_segmented, merged, config,
+            save_path=None, show=True
+        )
+
+    return {
+        'phi_final' : combined_phi,
+        'segmented_sr' : combined_segmented,
+        'history' : merged,
+        'saved_paths' : saved_paths,
+        'run_dir' : run_dir,
+        'image_name' : image_name,
     }

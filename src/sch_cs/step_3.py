@@ -22,4 +22,10 @@ def compute_t_star(hist_data: Dict, rho_data: Dict) -> Dict:
     t_star = m_A - alpha_A
     print(f'  |A|={len(A)}, A range=[{int(A.min())},{int(A.max())}], '
           f'm(A)={m_A:.2f}, alpha(A)={alpha_A:.2f}, t*={t_star:.2f}')
-    return {'A': A, 'A_freqs': A_freqs, 'm_A': m_A, 'alpha_A': alpha_A, 't_star': t_star}
+    return {
+        'A': A,
+        'A_freqs': A_freqs,
+        'm_A': m_A,
+        'alpha_A': alpha_A,
+        't_star': t_star
+    }

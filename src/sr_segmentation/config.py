@@ -2,6 +2,9 @@
 
 from dataclasses import dataclass
 
+# ─────────────────────────────────────────────────────────────────────────────
+# CONFIGURATION
+# ─────────────────────────────────────────────────────────────────────────────
 @dataclass
 class SRSplitConfig:
     output_dir: str = "sr_splits"

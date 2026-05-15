@@ -5,7 +5,7 @@ import cv2
 import numpy as np
 
 def save_all_outputs(run_dir, p_bar, chm_local, Nc, eps=1e-10):
-    
+
     img_path = os.path.join(run_dir, "corrected.png")
     p_scaled = p_bar / (p_bar.max() + eps) * 255
     cv2.imwrite(img_path, p_scaled.astype(np.uint8))

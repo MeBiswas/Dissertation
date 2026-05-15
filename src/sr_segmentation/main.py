@@ -16,7 +16,6 @@ def run_sr_split_pipeline(
     image_name="image",
     centre_col_override=None
 ):
-    
     print(f"[Process] SR Split → {image_name}")
 
     # --- Step 0: folder ---

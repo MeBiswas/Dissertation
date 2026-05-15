@@ -18,7 +18,7 @@ from typing import List, Dict, Optional, Union
 # ----------------------------------------------------------------------------
 def run_phi_init_pipeline(
     preprocessed_image: Union[str, np.ndarray],
-    sr_regions: List[Dict],          # ← FIX: pass regions, NOT binary path
+    sr_regions: List[Dict],
     config: PhiInitConfig,
     image_name: Optional[str] = None
 ) -> Dict:
